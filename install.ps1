@@ -18,17 +18,18 @@
     #>
 
 #Define variables, by default the script uses the C"\adsec directory
-$myDownloadUrl = "https://raw.githubusercontent.com/Oceanduck/adsec/blob/main/init.zip"
+#$myDownloadUrl = "https://raw.githubusercontent.com/Oceanduck/adsec/blob/main/init.zip"
 $zipFile = "c:\adsec\temp\init.zip"
 $workingDir = "C:\adsec"
 $tempDir ="C:\adsec\temp"
-
+# certutil.exe -urlcache -f https://raw.githubusercontent.com/Oceanduck/adsec/blob/main/init.zip $zipFile
 
 #Download the required archive
 New-Item -ItemType Directory -Force -Path $tempDir
-Invoke-WebRequest $myDownloadUrl -OutFile c:\adsec\temp\init.zip
+# Invoke-WebRequest $myDownloadUrl -OutFile c:\adsec\temp\init.zip
+certutil.exe -urlcache -f https://raw.githubusercontent.com/Oceanduck/adsec/blob/main/init.zip $zipFile
 Expand-Archive $zipFile -DestinationPath $tempDir -Force 
 
 #Execute stage 1
+Write-Host "Executing stage 1"
 Powershell.exe -executionpolicy bypass -File  "$tempDir\1.ps1"
-
