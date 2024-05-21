@@ -18,7 +18,7 @@
     #>
 
 #Define variables, by default the script uses the C"\adsec directory
-$myDownloadUrl = "https://github.com/Oceanduck/adsec/blob/main/init.zip"
+$myDownloadUrl = "https://raw.githubusercontent.com/Oceanduck/adsec/blob/main/init.zip"
 $zipFile = "c:\adsec\temp\init.zip"
 $workingDir = "C:\adsec"
 $tempDir ="C:\adsec\temp"
