@@ -27,7 +27,6 @@ $tempDir ="C:\adsec\temp"
 #Download the required archive
 New-Item -ItemType Directory -Force -Path $tempDir
 Invoke-WebRequest $myDownloadUrl -OutFile c:\adsec\temp\init.zip
-#certutil.exe -urlcache -split https://raw.githubusercontent.com/Oceanduck/adsec/blob/main/init.zip $zipFile
 Expand-Archive $zipFile -DestinationPath $tempDir -Force 
 
 #Execute stage 1
