@@ -30,9 +30,15 @@ $myDownloadUrl = "https://raw.githubusercontent.com/Oceanduck/adsec/main/dc/dc.z
 $zipFile = "c:\adsec\temp\dc.zip"
 $workingDir = "C:\adsec"
 $tempDir ="C:\adsec\temp"
+$ipIF = (Get-NetAdapter).ifIndex
+
+Set-NetIPAddress -InterfaceAlias $ipIF -dhcp enabled
+
+# Clean up the adsec
+Remove-Item -Path $workingDir -Recurse
+
 
 # Function to Download file
-
 function downloadFile($url, $targetFile)
 {
 "Downloading $url"
