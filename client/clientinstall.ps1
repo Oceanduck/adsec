@@ -1,0 +1,24 @@
+<#
+Create a Windows CLient - and join the talespin domain
+#>
+
+Clear-host
+write-host "Running Stage 0 - Starting installation of Client"
+write-host "This tool should not be run in production"
+write-host "this process would take betwen 10-15 minutes"
+Read-Host -Prompt "Press any key to continue or CTRL+C to quit. Once you continue the system will be renamed, ip address set, connected to the talespin domain and tools downloaded " | Out-Null
+
+#Define variables, by default the script uses the C"\adsec directory
+$myDownloadUrl = "https://github.com/Oceanduck/adsec/raw/main/client.zip"
+$zipFile = "c:\adsec\temp\client.zip"
+$workingDir = "C:\adsec"
+$tempDir ="C:\adsec\temp"
+
+#Download the required archive
+New-Item -ItemType Directory -Force -Path $tempDir
+Invoke-WebRequest $myDownloadUrl -OutFile c:\adsec\client.zip
+Expand-Archive $zipFile -DestinationPath $tempDir -Force 
+
+#Execute stage 1
+Write-Host "Executing stage 1"
+Powershell.exe -executionpolicy bypass -File  "$tempDir\client1.ps1"
