@@ -13,9 +13,12 @@
     .FUNCTIONALITY
        Download the files needed to create a domain and create a domain
        By Default the name of the directory is talespin.local
+       last updated on 20240813
     #>
 
 Clear-host
+
+Write-Host "Welcome to Active Directory Security Workshop"
 write-host "Running Stage 0 - Starting installation"
 write-host "This tool should not be run in production."
 write-host "This script will configure this server into a Domain Controller. It would reboot multiple times and would need you to provide credentials for the Administrator when it reboots"
@@ -27,9 +30,6 @@ $myDownloadUrl = "https://raw.githubusercontent.com/Oceanduck/adsec/main/dc/dc.z
 $zipFile = "c:\adsec\temp\dc.zip"
 $workingDir = "C:\adsec"
 $tempDir ="C:\adsec\temp"
-
-
-Read-Host -Prompt "Press any key to continue or CTRL+C to quit" | Out-Null
 
 # Function to Download file
 
@@ -62,11 +62,12 @@ $targetStream.Flush()
 }
 
 #Download the required archive from Github
-New-Item -ItemType Directory -Force -Path $tempDir
+Write-Output "Creating a temporary Directory $tempDir and downloading the Script to create Active Directory."
+New-Item -ItemType Directory -Force -Path $tempDir | Select Name
 downloadFile $myDownloadUrl "c:\adsec\temp\dc.zip"
-#Invoke-WebRequest $myDownloadUrl -OutFile c:\adsec\temp\dc.zip
 Expand-Archive $zipFile -DestinationPath $tempDir -Force 
 
 #Execute stage 1
 Write-Host "Executing stage 1"
+Start-Sleep 3
 Powershell.exe -executionpolicy bypass -File  "$tempDir\dc1.ps1"
