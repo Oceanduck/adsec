@@ -18,17 +18,7 @@
 
 Clear-host
 
-Read-Host "Welcome to Active Directory Security Workshop"
-Write-Host 
-"
-██████╗ ██╗   ██╗██████╗ ██████╗  █████╗ ███████╗███████╗ ██████╗
-██╔══██╗██║   ██║██╔══██╗██╔══██╗██╔══██╗██╔════╝██╔════╝██╔════╝
-██████╔╝██║   ██║██║  ██║██████╔╝███████║███████╗█████╗  ██║     
-██╔══██╗██║   ██║██║  ██║██╔══██╗██╔══██║╚════██║██╔══╝  ██║     
-██║  ██║╚██████╔╝██████╔╝██║  ██║██║  ██║███████║███████╗╚██████╗
-╚═╝  ╚═╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚══════╝ ╚═════╝
-"
-
+Write-Host "Welcome to Active Directory Security Workshop"
 write-host "Running Stage 0 - Starting installation"
 write-host "This tool should not be run in production."
 write-host "This script will configure this server into a Domain Controller. It would reboot multiple times and would need you to provide credentials for the Administrator when it reboots"
@@ -40,8 +30,6 @@ $myDownloadUrl = "https://raw.githubusercontent.com/Oceanduck/adsec/main/dc/dc.z
 $zipFile = "c:\adsec\temp\dc.zip"
 $workingDir = "C:\adsec"
 $tempDir ="C:\adsec\temp"
-
-Read-Host -Prompt "Press any key to continue or CTRL+C to quit" | Out-Null
 
 # Function to Download file
 

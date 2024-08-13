@@ -32,6 +32,35 @@ $disableiesecconfig = 'yes'
 $workingDir = "C:\adsec"
 $tempDir ="C:\adsec\temp"
 
+#Function to Download 
+function downloadFile($url, $targetFile)
+{
+"Downloading $url"
+$uri = New-Object "System.Uri" "$url"
+$request = [System.Net.HttpWebRequest]::Create($uri)
+$request.set_Timeout(15000) #15 second timeout
+$response = $request.GetResponse()
+$totalLength = [System.Math]::Floor($response.get_ContentLength()/1024)
+$responseStream = $response.GetResponseStream()
+$targetStream = New-Object -TypeName System.IO.FileStream -ArgumentList $targetFile, Create
+$buffer = new-object byte[] 10KB
+$count = $responseStream.Read($buffer,0,$buffer.length)
+$downloadedBytes = $count
+    while ($count -gt 0)
+{
+[System.Console]::CursorLeft = 0
+[System.Console]::Write("Downloaded {0}K of {1}K", [System.Math]::Floor($downloadedBytes/1024), $totalLength)
+$targetStream.Write($buffer, 0, $count)
+$count = $responseStream.Read($buffer,0,$buffer.length)
+$downloadedBytes = $downloadedBytes + $count
+}
+"`nFinished Download"
+$targetStream.Flush()
+    $targetStream.Close()
+    $targetStream.Dispose()
+    $responseStream.Dispose()
+}
+
 #Configure the Network
 try {
    New-NetIPAddress -InterfaceIndex $ipIF -IPAddress $IPv4Address -PrefixLength $IPv4Prefix -DefaultGateway $IPv4GW -ErrorAction Stop | Out-Null
@@ -47,7 +76,7 @@ catch {
 
 try {
    if ($enablerdp -eq "yes") {
-      Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server'-name "fDenyTSConnections" -Value 0 -ErrorAction Stop
+      Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server'-name "fDenyTSConnections" -Value 0 -ErrorAction Stop | Out-Null
       Enable-NetFirewallRule -DisplayGroup "Remote Desktop" -ErrorAction Stop
       Write-Host "RDP Successfully enabled" -ForegroundColor Green
    }   
@@ -102,9 +131,8 @@ catch {
 
 #Restart the Computer
 try {
-   Write-Host "Rebooting the system  in 30 seconds, the installation will continue after reboot. Please login with Administrator login once the system reboots"
-   Write-Host "You may need to press enter"
-   read-host “Press ENTER to continue...”
+   Write-Host "Rebooting the system, the installation will continue after reboot. Please login with Administrator login once the system reboots"
+   Start-Sleep 3
    Restart-Computer  -ErrorAction Stop
 }
 catch {
