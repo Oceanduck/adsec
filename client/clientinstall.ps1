@@ -5,7 +5,10 @@ Create a Windows CLient - and join the talespin domain
 Clear-host
 write-host "Running Stage 0 - Starting installation of Client"
 write-host "This tool should not be run in production"
-write-host "this process would take betwen 10-15 minutes"
+write-host "This process would take between 10-15 minutes"
+Write-Host "********************"
+Write-Host "Please ensure you have taken a snapshot of the VM"
+
 Read-Host -Prompt "Press any key to continue or CTRL+C to quit. Once you continue the system will be renamed, ip address set, connected to the talespin domain and tools downloaded " | Out-Null
 #Requires -RunAsAdministrator
 
