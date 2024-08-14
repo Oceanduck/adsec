@@ -17,17 +17,6 @@ $workingDir = "C:\adsec"
 
 cd $workingDir
 
-#Configure the Network
-try {
-   New-NetIPAddress -InterfaceIndex $ipIF -IPAddress $IPv4Address -PrefixLength $IPv4Prefix -DefaultGateway $IPv4GW -ErrorAction Stop | Out-Null
-   Set-DNSClientServerAddress -ServerAddresses $IPv4DNS -interfaceIndex $ipIF -ErrorAction Stop
-   Write-Host "IP Address successfully set to $($IPv4Address), subnet $($IPv4Prefix), default gateway $($IPv4GW) and DNS Server $($IPv4DNS)" -ForegroundColor Green   
-}
-catch {
-   Write-Warning -Message $("Failed to apply network settings. Error: "+ $_.Exception.Message)
-   Break;>
-}
-
 #Configure RDP
 
 try {
@@ -94,6 +83,7 @@ catch {
    Write-Warning -Message $("Failed to set the registry to run stage 1. Error: "+ $_.Exception.Message)
    Break;
 }
+
 
 #Restart the Computer
 try {
