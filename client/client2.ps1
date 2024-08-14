@@ -36,7 +36,7 @@ Add-Computer -DomainName talespin.local
 Write-Host "Downloading and configuring the Wiki"
 
 downloadFile "https://github.com/Oceanduck/adsec/raw/main/wiki.7z" $workingDir\wiki.7z
-7z.exe x $workingDir\wiki.7z -oC:\nginx\nginx-1.27.0\html\
+7z.exe x $workingDir\wiki.7z -o"C:\nginx\nginx-1.27.0\html\" -y
 
 
 $workingDir = "C:\adsec"
