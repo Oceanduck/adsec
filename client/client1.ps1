@@ -65,9 +65,9 @@ Invoke-WebRequest "https://github.com/hashcat/hashcat/releases/download/v6.2.6/h
 
 #Setting up the stage 2 script execution
 try {
-   New-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\RunOnce"
-   Set-Location -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\RunOnce"
-   New-ItemProperty -Name client2 -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\RunOnce" -PropertyType String -Value "Powershell -ep bypass C:\adsec\temp\client2.ps1"
+   New-Item -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\RunOnce"
+   Set-Location -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\RunOnce"
+   New-ItemProperty -Name client2 -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\RunOnce" -PropertyType String -Value "Powershell -ep bypass C:\adsec\temp\client2.ps1"
 }
 catch {
    Write-Warning -Message $("Failed to set the registry to run stage 1. Error: "+ $_.Exception.Message)

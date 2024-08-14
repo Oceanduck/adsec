@@ -1,4 +1,3 @@
-
 $workingDir = "C:\adsec" 
 $tempDir = "C:\adsec\temp"
 $computerName = "client1"
@@ -28,18 +27,21 @@ catch {
 }
 
 #Check connectivity to the domain controller
-
+Start-Sleep 5
 try {
   Test-Connection -ComputerName dc1.talespin.local 
 }
 catch {
-  Write-Warning -Message $("Failed to set ping the Domain Controller "+ $_.Exception.Message)
+  Write-Warning -Message $("Failed to ping the Domain Controller "+ $_.Exception.Message)
 }
 
 Rename-Computer -NewName $computerName
 
 #pass Credentials for a normal user
-Add-Computer -DomainName talespin.local 
+$username = "Tailspin\Administrator"
+$password = ConvertTo-SecureString "Password@123" -AsPlainText -Force
+$credential = New-Object -typename System.Management.Automation.PSCredential -argumentlist $username, $password
+Add-Computer -DomainName talespin.local -Credential $credential
 
 $workingDir = "C:\adsec"
 Set-ItemProperty -path "HKCU:\Control Panel\Desktop\" -name wallpaper -value $tempDir\wall.jpg
@@ -48,9 +50,8 @@ rundll32.exe user32.dll, UpdatePerUserSystemParameters
 
 #Restart the Computer
 try {
-  Write-Host "Rebooting the system  in 30 seconds, the installation will continue after reboot. Please login with Administrator login once the system reboots"
-  Write-Host "You may need to press enter"
-  read-host “Press ENTER to continue...”
+  Write-Host "Rebooting the system in 10 seconds"
+  Start-Sleep 10
   Restart-Computer  -ErrorAction Stop
 }
 catch {
