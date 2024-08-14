@@ -1,55 +1,44 @@
 
 $workingDir = "C:\adsec" 
 
+function downloadFile($url, $targetFile)
+{
+"Downloading $url"
+$uri = New-Object "System.Uri" "$url"
+$request = [System.Net.HttpWebRequest]::Create($uri)
+$request.set_Timeout(15000) #15 second timeout
+$response = $request.GetResponse()
+$totalLength = [System.Math]::Floor($response.get_ContentLength()/1024)
+$responseStream = $response.GetResponseStream()
+$targetStream = New-Object -TypeName System.IO.FileStream -ArgumentList $targetFile, Create
+$buffer = new-object byte[] 10KB
+$count = $responseStream.Read($buffer,0,$buffer.length)
+$downloadedBytes = $count
+    while ($count -gt 0)
+{
+[System.Console]::CursorLeft = 0
+[System.Console]::Write("Downloaded {0}K of {1}K", [System.Math]::Floor($downloadedBytes/1024), $totalLength)
+$targetStream.Write($buffer, 0, $count)
+$count = $responseStream.Read($buffer,0,$buffer.length)
+$downloadedBytes = $downloadedBytes + $count
+}
+"`nFinished Download"
+$targetStream.Flush()
+    $targetStream.Close()
+    $targetStream.Dispose()
+    $responseStream.Dispose()
+}
+
 #pass Credentials for a normal user
 Add-Computer -DomainName talespin.local 
 
 #Download and Install mkdocs
-Write-Host "Downloading and installing mkdocs for wiki ..."
-python pip install mkdocs 
-python pip install mkdocs-material
+Write-Host "Downloading and configuring the Wiki"
 
-# Create a service to run mkdocs
-python -m mkdocs new C:\adsec\adsec-wiki
+downloadFile "https://github.com/Oceanduck/adsec/raw/main/wiki.7z" $workingDir\wiki.7z
+7z.exe x $workingDir\wiki.7z -oC:\nginx\nginx-1.27.0\html\
 
 
-#Download markdown files from github
-Get mkdocs.yml  files
-
-# powershell -ep bypass "python -m mkdocs serve -f C:\adsec\adsec-wiki\mkdocs.yml" 
-
-$params = @{
-    Name = "adsec-wiki"
-    BinaryPathName = 'cmd /c "python -m mkdocs serve -f C:\adsec\adsec-wiki\mkdocs.yml"'
-    DisplayName = "adsec-wiki"
-    StartupType = "Automatic"
-    Description = "Service to run the adsec wiki"
-  }
-New-Service @params
-Start-Service -Name "adsec-wiki"
-
-
-#Create a directory 
-C:\adsec\tools
-
-New-Item -ItemType Directory -Force -Path $tempDir
-Invoke-WebRequest $myDownloadUrl -OutFile c:\adsec\temp\init.zip
-Expand-Archive $zipFile -DestinationPath $tempDir -Force 
-
-dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
-dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all
-wsl.exe --install
-wsl.exe --update
-wsl --set-default-version 2
-wsl --set-version kali-linux 2
-Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux
-Invoke-WebRequest -Uri https://aka.ms/wsl-kali-linux-new -OutFile Kali.appx -UseBasicParsing
-Add-AppxPackage .\Kali.appx
-kali config --default-user root
-
-
-Expand-Archive $zipFile -DestinationPath $tempDir -Force 
-
-https://github.com/GhostPack/Rubeus/archive/refs/heads/master.zip 
-https://github.com/PowerShellMafia/PowerSploit/archive/refs/heads/master.zip 
-https://github.com/gentilkiwi/mimikatz/archive/refs/heads/master.zip 
+$workingDir = "C:\adsec"
+Set-ItemProperty -path "HKCU:\Control Panel\Desktop\" -name wallpaper -value $workingDir\wall.jpg
+rundll32.exe user32.dll, UpdatePerUserSystemParameters

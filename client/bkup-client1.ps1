@@ -15,8 +15,6 @@ $enablerdp = 'yes'
 $disableiesecconfig = 'yes'
 $workingDir = "C:\adsec"
 
-cd $workingDir
-
 function downloadFile($url, $targetFile)
 {
 "Downloading $url"
@@ -95,22 +93,44 @@ catch {
 
 Rename-Computer -NewName $computerName
 
-#Download and install Chocolatey
-Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+# Download and install Chrome
 
-choco install firefox --version 129.0.0 -y
-choco install vscode --version 1.92.1 -y
-choco install winpcap --version 4.1.3.20161116 -y
-choco install wireshark --version 4.2.6 -y
-choco install bginfo --version 4.32 -y
-choco install 7zip --version 24.8.0 -y
-choco install nginx --params '"/installLocation:C:\nginx /port:8080"' -y
+Write-Host "Downloading and installing Chrome..."
+$chromeInstallerPath = "$env:TEMP\ChromeSetup.exe"
+Invoke-WebRequest -Uri "https://dl.google.com/chrome/install/latest/chrome_installer.exe" -OutFile $chromeInstallerPath
+Write-Host "Installing Chrome..."
+Start-Process -FilePath $chromeInstallerPath -Args "/silent /install" -Wait
+Remove-Item $chromeInstallerPath
 
+# Download and install VSC
+Write-Host "Downloading and installing Visual Studio Code..."
+$vscodeInstallerPath = "$env:TEMP\VSCodeSetup.exe"
+Invoke-WebRequest -Uri "https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-user" -OutFile $vscodeInstallerPath
+Write-Host "Installing Visual Studio Code..."
+Start-Process -FilePath $vscodeInstallerPath -Args "/silent /mergetasks=!runcode" -Wait
+Remove-Item $vscodeInstallerPath
+
+# Download and install Python
+Write-Host "Downloading Python..."
+$latestPythonVersion = (Invoke-WebRequest -Uri "https://www.python.org/downloads/windows/").Content | Select-String -Pattern 'Latest Python (\d+) Release - Python (\d+\.\d+\.\d+)' | % { $_.Matches.Groups[2].Value }
+$pythonInstallerPath = "$env:TEMP\PythonInstaller.exe"
+Invoke-WebRequest -Uri "https://www.python.org/ftp/python/$latestPythonVersion/python-$latestPythonVersion-amd64.exe" -OutFile $pythonInstallerPath
+Write-Host "Installing Python..."
+Start-Process -FilePath $pythonInstallerPath -Args "/quiet InstallAllUsers=1 PrependPath=1" -Wait
+Remove-Item $pythonInstallerPath
+
+# Download and install Wireshark
+Write-Host "Downloading and installing Wireshark..."
+$wiresharkInstallerPath = "$env:TEMP\Wireshark.exe"
+Invoke-WebRequest -Uri "https://2.na.dl.wireshark.org/win64/Wireshark-4.2.6-x64.exes" -OutFile $wiresharkInstallerPath
+Write-Host "Installing Wireshark..."
+Start-Process -FilePath $wiresharkInstallerPath -Args "/NCRC /S /desktopicon=yes" 
+Remove-Item $wiresharkInstallerPath
 
 # Download Attack tools
-downloadFile "https://github.com/gentilkiwi/mimikatz/releases/download/2.2.0-20220919/mimikatz_trunk.7z"  "c:\adsec\mimikatz.7z"
-downloadFile "https://github.com/hashcat/hashcat/releases/download/v6.2.6/hashcat-6.2.6.7z" "c:\adsec\hashcat.7z"
-
+#mimikatz
+#Rubeus
+#spoolservice
 
 #Setting up the stage 2 script execution
 try {
