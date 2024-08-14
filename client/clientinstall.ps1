@@ -14,7 +14,7 @@ $zipFile = "c:\adsec\temp\client.zip"
 $workingDir = "C:\adsec"
 $tempDir ="C:\adsec\temp"
 
-Invoke-WebRequest $myDownloadUrl -OutFile $tempDir\client.zip
+Invoke-WebRequest $myDownloadUrl -OutFile $tempDir\
 #Download the required archive
 New-Item -ItemType Directory -Force -Path $tempDir
 Expand-Archive $zipFile -DestinationPath $tempDir -Force 
