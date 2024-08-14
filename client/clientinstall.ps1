@@ -9,7 +9,7 @@ write-host "this process would take betwen 10-15 minutes"
 Read-Host -Prompt "Press any key to continue or CTRL+C to quit. Once you continue the system will be renamed, ip address set, connected to the talespin domain and tools downloaded " | Out-Null
 
 #Define variables, by default the script uses the C"\adsec directory
-$myDownloadUrl = "https://github.com/Oceanduck/adsec/raw/main/client/client.zip"
+$myDownloadUrl = "https://github.com/Oceanduck/adsec/blob/main/client/client.zip"
 $zipFile = "c:\adsec\temp\client.zip"
 $workingDir = "C:\adsec"
 $tempDir ="C:\adsec\temp"
