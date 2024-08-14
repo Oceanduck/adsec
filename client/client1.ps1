@@ -45,23 +45,13 @@ catch {
    Break;
 }
 
-#Check connectivity to the domain controller
 
-try {
-   Test-Connection -ComputerName dc1.talespin.local 
-}
-catch {
-   Write-Warning -Message $("Failed to set ping the Domain Controller "+ $_.Exception.Message)
-}
-
-Rename-Computer -NewName $computerName
 
 #Download and install Chocolatey
 Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 
 choco install firefox --version 129.0.0 -y
 choco install vscode --version 1.92.1 -y
-choco install winpcap --version 4.1.3.20161116 -y
 choco install wireshark --version 4.2.6 -y
 choco install bginfo --version 4.32 -y
 choco install 7zip --version 24.8.0 -y
@@ -77,13 +67,12 @@ Invoke-WebRequest "https://github.com/hashcat/hashcat/releases/download/v6.2.6/h
 try {
    New-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\RunOnce"
    Set-Location -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\RunOnce"
-   New-ItemProperty -Name adsec2 -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\RunOnce" -PropertyType String -Value "Powershell C:\adsec\temp\client2.ps1"
+   New-ItemProperty -Name client2 -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\RunOnce" -PropertyType String -Value "Powershell -ep bypass C:\adsec\temp\client2.ps1"
 }
 catch {
    Write-Warning -Message $("Failed to set the registry to run stage 1. Error: "+ $_.Exception.Message)
    Break;
 }
-
 
 #Restart the Computer
 try {

@@ -1,11 +1,19 @@
 
 $workingDir = "C:\adsec" 
+$tempDir = "C:\adsec\temp"
+$computerName = "client1"
+$computerName = "client1"
+$IPv4Address =  "192.168.8.81"
+$IPv4Prefix = "24"
+$IPv4GW = "192.168.8.1"
+$IPv4DNS = "192.168.8.1"
+$enablerdp = 'yes'
+$disableiesecconfig = 'yes'
+$workingDir = "C:\adsec"
 
 Write-Host "Downloading and configuring the Wiki"
 Invoke-WebRequest "https://github.com/Oceanduck/adsec/raw/main/wiki.7z" -OutFile $workingDir\wiki.7z
 7z.exe x $workingDir\wiki.7z -o"C:\nginx\nginx-1.27.0\html\" -y
-
-
 
 #Configure the Network
 try {
@@ -19,14 +27,23 @@ catch {
   Break;>
 }
 
+#Check connectivity to the domain controller
+
+try {
+  Test-Connection -ComputerName dc1.talespin.local 
+}
+catch {
+  Write-Warning -Message $("Failed to set ping the Domain Controller "+ $_.Exception.Message)
+}
+
+Rename-Computer -NewName $computerName
+
 #pass Credentials for a normal user
 Add-Computer -DomainName talespin.local 
 
 $workingDir = "C:\adsec"
-Set-ItemProperty -path "HKCU:\Control Panel\Desktop\" -name wallpaper -value $workingDir\wall.jpg
+Set-ItemProperty -path "HKCU:\Control Panel\Desktop\" -name wallpaper -value $tempDir\wall.jpg
 rundll32.exe user32.dll, UpdatePerUserSystemParameters
-
-
 
 
 #Restart the Computer
