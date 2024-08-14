@@ -17,34 +17,6 @@ $workingDir = "C:\adsec"
 
 cd $workingDir
 
-function downloadFile($url, $targetFile)
-{
-"Downloading $url"
-$uri = New-Object "System.Uri" "$url"
-$request = [System.Net.HttpWebRequest]::Create($uri)
-$request.set_Timeout(15000) #15 second timeout
-$response = $request.GetResponse()
-$totalLength = [System.Math]::Floor($response.get_ContentLength()/1024)
-$responseStream = $response.GetResponseStream()
-$targetStream = New-Object -TypeName System.IO.FileStream -ArgumentList $targetFile, Create
-$buffer = new-object byte[] 10KB
-$count = $responseStream.Read($buffer,0,$buffer.length)
-$downloadedBytes = $count
-    while ($count -gt 0)
-{
-[System.Console]::CursorLeft = 0
-[System.Console]::Write("Downloaded {0}K of {1}K", [System.Math]::Floor($downloadedBytes/1024), $totalLength)
-$targetStream.Write($buffer, 0, $count)
-$count = $responseStream.Read($buffer,0,$buffer.length)
-$downloadedBytes = $downloadedBytes + $count
-}
-"`nFinished Download"
-$targetStream.Flush()
-    $targetStream.Close()
-    $targetStream.Dispose()
-    $responseStream.Dispose()
-}
-
 #Configure the Network
 try {
    New-NetIPAddress -InterfaceIndex $ipIF -IPAddress $IPv4Address -PrefixLength $IPv4Prefix -DefaultGateway $IPv4GW -ErrorAction Stop | Out-Null
@@ -108,8 +80,8 @@ choco install nginx --params '"/installLocation:C:\nginx /port:8080"' -y
 
 
 # Download Attack tools
-downloadFile "https://github.com/gentilkiwi/mimikatz/releases/download/2.2.0-20220919/mimikatz_trunk.7z"  "c:\adsec\mimikatz.7z"
-downloadFile "https://github.com/hashcat/hashcat/releases/download/v6.2.6/hashcat-6.2.6.7z" "c:\adsec\hashcat.7z"
+Invoke-WebRequest "https://github.com/gentilkiwi/mimikatz/releases/download/2.2.0-20220919/mimikatz_trunk.7z" -OutFile "c:\adsec\mimikatz.7z"
+Invoke-WebRequest "https://github.com/hashcat/hashcat/releases/download/v6.2.6/hashcat-6.2.6.7z" -OutFile "c:\adsec\hashcat.7z"
 
 
 #Setting up the stage 2 script execution
