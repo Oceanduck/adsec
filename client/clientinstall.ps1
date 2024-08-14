@@ -44,7 +44,7 @@ $targetStream.Flush()
 
 #Download the required archive
 New-Item -ItemType Directory -Force -Path $tempDir
-downloadFile $myDownloadUrl "c:\adsec\client.zip"
+downloadFile $myDownloadUrl $zipFile
 Expand-Archive $zipFile -DestinationPath $tempDir -Force 
 
 #Execute stage 1
