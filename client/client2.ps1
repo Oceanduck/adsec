@@ -41,7 +41,14 @@ Rename-Computer -NewName $computerName
 $username = "Tailspin\Administrator"
 $password = ConvertTo-SecureString "Password@123" -AsPlainText -Force
 $credential = New-Object -typename System.Management.Automation.PSCredential -argumentlist $username, $password
-Add-Computer -DomainName talespin.local -Credential $credential
+
+try {
+  Add-Computer -DomainName talespin.local -Credential $credential
+}
+catch {
+  Add-Computer -DomainName talespin.local -Credential $credential -ComputerName -ClientX
+}
+
 
 $workingDir = "C:\adsec"
 Set-ItemProperty -path "HKCU:\Control Panel\Desktop\" -name wallpaper -value $tempDir\wall.jpg
