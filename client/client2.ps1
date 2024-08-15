@@ -14,6 +14,8 @@ Write-Host "Downloading and configuring the Wiki"
 Invoke-WebRequest "https://github.com/Oceanduck/adsec/raw/main/wiki.7z" -OutFile $workingDir\wiki.7z
 7z.exe x $workingDir\wiki.7z -o"C:\nginx\nginx-1.27.0\html\" -y
 
+Start-Sleep 5
+
 #Configure the Network
 try {
   $adapter = Get-NetAdapter | ? {$_.Status -eq "up"}
@@ -23,7 +25,6 @@ try {
 }
 catch {
   Write-Warning -Message $("Failed to apply network settings. Error: "+ $_.Exception.Message)
-  Break;>
 }
 
 #Check connectivity to the domain controller
