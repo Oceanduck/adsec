@@ -59,6 +59,27 @@ Invoke-WebRequest $myDownloadUrl -OutFile $tempDir\client.zip
 New-Item -ItemType Directory -Force -Path $tempDir
 Expand-Archive $zipFile -DestinationPath $tempDir -Force 
 
-#Execute stage 1
-Write-Host "Executing stage 1"
-Powershell.exe -executionpolicy bypass -File  "$tempDir\client1.ps1"
+Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+
+#Setting up the stage 2 script execution
+try {
+    New-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\RunOnce"
+    Set-Location -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\RunOnce"
+    New-ItemProperty -Name client1 -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\RunOnce" -PropertyType String -Value "Powershell -ep bypass -File C:\adsec\temp\client1.ps1"
+  }
+  catch {
+     Write-Warning -Message $("Failed to set the registry to run stage 1. Error: "+ $_.Exception.Message)
+     Break;
+  }
+  
+  #Restart the Computer
+  try {
+     Write-Host "Rebooting the system  in 30 seconds, the installation will continue after reboot. Please login with Administrator login once the system reboots"
+     Write-Host "You may need to press enter"
+     read-host “Press ENTER to continue...”
+     Restart-Computer  -ErrorAction Stop
+  }
+  catch {
+     Write-Warning -Message $("Failed to Restart the Computer. Error: "+ $_.Exception.Message)
+     Break;
+  }
