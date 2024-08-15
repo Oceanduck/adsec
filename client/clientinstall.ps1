@@ -19,7 +19,8 @@ function Check-Admin {
     } else {
         return $true
     }
-
+}
+#Check Tamper Protection
 function Check-DefenderAndTamperProtection {
     $defender = Get-WmiObject -Namespace "root\Microsoft\Windows\Defender" -Class MSFT_MpPreference
     if ($defender.DisableRealtimeMonitoring) {
@@ -44,8 +45,6 @@ if (Check-Admin) {
     exit
 }
 
-
-
 if (Check-DefenderAndTamperProtection) {
     Write-Host "`t[+] Windows Defender and Tamper Protection are disabled" -ForegroundColor Green
 } else {
@@ -53,8 +52,6 @@ if (Check-DefenderAndTamperProtection) {
     sleep 3
     exit
 }
-
-
 
 #Define variables, by default the script uses the C"\adsec directory
 $myDownloadUrl = "https://github.com/Oceanduck/adsec/raw/main/client/client.zip"
