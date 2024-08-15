@@ -39,7 +39,8 @@ function Check-DefenderAndTamperProtection {
 
 if (Check-Admin) {
     Write-Host "`t[+] Script Running as an Admin" -ForegroundColor Green
-} else {
+    } 
+else {
     Write-Host "`t[-] Script not running as an Admin. Script will exit" -ForegroundColor Red
     sleep 3
     exit
@@ -47,7 +48,8 @@ if (Check-Admin) {
 
 if (Check-DefenderAndTamperProtection) {
     Write-Host "`t[+] Windows Defender and Tamper Protection are disabled" -ForegroundColor Green
-} else {
+    } 
+else {
     Write-Host "`t[-] Windows Defender and Tamper Protection are enabled. Script will exit" -ForegroundColor Red
     sleep 3
     exit
