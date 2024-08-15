@@ -46,8 +46,6 @@ else {
     exit
 }
 
-
-
 #Define variables, by default the script uses the C"\adsec directory
 $myDownloadUrl = "https://github.com/Oceanduck/adsec/raw/main/client/client.zip"
 $zipFile = "c:\adsec\temp\client.zip"
@@ -67,8 +65,7 @@ try {
  catch {
     Write-Warning -Message $("Failed to open zip file RDP. Error: "+ $_.Exception.Message)
     Break;
-
- }
+}
 
 
 Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
