@@ -1,7 +1,6 @@
 $workingDir = "C:\adsec" 
 $tempDir = "C:\adsec\temp"
 $computerName = "client1"
-$computerName = "client1"
 $IPv4Address =  "192.168.8.81"
 $IPv4Prefix = "24"
 $IPv4GW = "192.168.8.1"
@@ -36,7 +35,15 @@ catch {
   Write-Warning -Message $("Failed to ping the Domain Controller "+ $_.Exception.Message)
 }
 
-Rename-Computer -NewName $computerName
+#Rename the computer
+try {
+  Rename-Computer -ComputerName $env:COMPUTERNAME -NewName $computerName -ErrorAction Stop
+  Write-Host "Systemname has been changed to $($computerName)" -ForegroundColor Green
+}
+catch {
+  Write-Warning -Message $("Failed to disable Ie Security Configuration. Error: "+ $_.Exception.Message)
+  Break;
+}
 
 #pass Credentials for a normal user
 $username = "Tailspin\Administrator"

@@ -50,7 +50,7 @@ catch {
 #Download and install Chocolatey
 Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 
-choco install googlechrome --version 127.0.6533.100 -y
+choco install googlechrome --version 127.0.6533.100 -y --ignore-checksums 
 choco install vscode --version 1.92.1 -y
 choco install wireshark --version 4.2.6 -y
 choco install bginfo --version 4.32 -y

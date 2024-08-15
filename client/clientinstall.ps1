@@ -10,7 +10,51 @@ Write-Host "********************"
 Write-Host "Please ensure you have taken a snapshot of the VM"
 
 Read-Host -Prompt "Press any key to continue or CTRL+C to quit. Once you continue the system will be renamed, ip address set, connected to the talespin domain and tools downloaded " | Out-Null
-#Requires -RunAsAdministrator
+
+#Check Running as Administrator
+function Check-Admin {
+    $currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
+    if (-Not $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+        return $false
+    } else {
+        return $true
+    }
+
+function Check-DefenderAndTamperProtection {
+    $defender = Get-WmiObject -Namespace "root\Microsoft\Windows\Defender" -Class MSFT_MpPreference
+    if ($defender.DisableRealtimeMonitoring) {
+        if (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows Defender\Features" -Name "TamperProtection" -ea 0) {
+            if ($(Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows Defender\Features" -Name "TamperProtection").TamperProtection -eq 5) {
+                return $false
+            } else {
+                return $true
+            }
+        }
+    } else {
+        return $false
+    }
+
+}    
+
+if (Check-Admin) {
+    Write-Host "`t[+] Script Running as an Admin" -ForegroundColor Green
+} else {
+    Write-Host "`t[-] Script not running as an Admin. Script will exit" -ForegroundColor Red
+    sleep 3
+    exit
+}
+
+
+
+if (Check-DefenderAndTamperProtection) {
+    Write-Host "`t[+] Windows Defender and Tamper Protection are disabled" -ForegroundColor Green
+} else {
+    Write-Host "`t[-] Windows Defender and Tamper Protection are enabled. Script will exit" -ForegroundColor Red
+    sleep 3
+    exit
+}
+
+
 
 #Define variables, by default the script uses the C"\adsec directory
 $myDownloadUrl = "https://github.com/Oceanduck/adsec/raw/main/client/client.zip"
