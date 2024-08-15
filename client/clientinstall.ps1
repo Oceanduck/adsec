@@ -46,14 +46,7 @@ else {
     exit
 }
 
-if (Check-DefenderAndTamperProtection) {
-    Write-Host "`t[+] Windows Defender and Tamper Protection are disabled" -ForegroundColor Green
-    } 
-else {
-    Write-Host "`t[-] Windows Defender and Tamper Protection are enabled. Script will exit" -ForegroundColor Red
-    sleep 3
-    exit
-}
+
 
 #Define variables, by default the script uses the C"\adsec directory
 $myDownloadUrl = "https://github.com/Oceanduck/adsec/raw/main/client/client.zip"
