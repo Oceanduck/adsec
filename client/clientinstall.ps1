@@ -54,9 +54,13 @@ $zipFile = "c:\adsec\temp\client.zip"
 $workingDir = "C:\adsec"
 $tempDir ="C:\adsec\temp"
 
-Invoke-WebRequest $myDownloadUrl -OutFile $tempDir\client.zip
-#Download the required archive
+
 New-Item -ItemType Directory -Force -Path $tempDir
+Invoke-WebRequest $myDownloadUrl -OutFile $tempDir\client.zip
+
+sleep 3 
+#Download the required archive
+
 Expand-Archive $zipFile -DestinationPath $tempDir -Force 
 
 Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
