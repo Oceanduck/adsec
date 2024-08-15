@@ -54,14 +54,21 @@ $zipFile = "c:\adsec\temp\client.zip"
 $workingDir = "C:\adsec"
 $tempDir ="C:\adsec\temp"
 
-
 New-Item -ItemType Directory -Force -Path $tempDir
 Invoke-WebRequest $myDownloadUrl -OutFile $tempDir\client.zip
 
 sleep 3 
 #Download the required archive
 
-Expand-Archive $zipFile -DestinationPath $tempDir -Force 
+try {
+    Expand-Archive $zipFile -DestinationPath $tempDir -Force 
+    Write-Host "zipfile Successfully expanded" -ForegroundColor Green
+    }   
+ }
+ catch {
+    Write-Warning -Message $("Failed to open zip file RDP. Error: "+ $_.Exception.Message)
+    Break;
+
 
 Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 
