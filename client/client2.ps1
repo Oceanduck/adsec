@@ -11,17 +11,15 @@ $workingDir = "C:\adsec"
 
 #Check connectivity to the domain controller
 Start-Sleep 5
-try {
-  Test-Connection -ComputerName dc1.talespin.local 
-}
-catch {
-  Write-Warning -Message $("Failed to ping the Domain Controller "+ $_.Exception.Message)
-}
+
+do {
+    Write-Host "waiting for ping to dc1"
+    sleep 3      
+} until(Test-NetConnection dc1.talespin.local SMB | ? { $_.TcpTestSucceeded } )
 
 
 Write-Host "Please ensure the dc1 system is up and running." -ForegroundColor Red 
 Read-Host “Press ENTER to continue...”
-
 
 #pass Credentials for a normal user
 $username = "Tailspin\Administrator"

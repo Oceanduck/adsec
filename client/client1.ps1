@@ -5,10 +5,11 @@ write-host "Running Stage 1 - Configuring the Client"
 write-host "This tool should not be run in production"
 
 #Define variables to configure the network
+
 $IPv4Address =  "192.168.8.81"
 $IPv4Prefix = "24"
 $IPv4GW = "192.168.8.1"
-$IPv4DNS = "192.168.8.1"
+$IPv4DNS = "192.168.8.71"
 $ipIF = (Get-NetAdapter).ifIndex
 $enablerdp = 'yes'
 $disableiesecconfig = 'yes'
@@ -55,8 +56,8 @@ Invoke-WebRequest "https://github.com/hashcat/hashcat/releases/download/v6.2.6/h
 
 Write-Host "Downloading and configuring the Wiki"
 Invoke-WebRequest "https://github.com/Oceanduck/adsec/raw/main/wiki.7z" -OutFile $workingDir\wiki.7z
+Start-Sleep 5
 7z.exe x $workingDir\wiki.7z -o"C:\nginx\nginx-1.27.0\html\" -y
-
 Start-Sleep 5
 
 #Configure the Network
@@ -90,15 +91,17 @@ try {
 }
 catch {
    Write-Warning -Message $("Failed to set the registry to run stage 1. Error: "+ $_.Exception.Message)
+   Start-Sleep 10
    Break;
 }
 
 #Restart the Computer
 try {
-   Write-Host "Rebooting the system  in 30 seconds, the installation will continue after reboot. Please login with Administrator login once the system reboots"
+   Write-Host "Rebooting the system  in 30 seconds, the installation will continue after reboot"
    Restart-Computer
 }
 catch {
    Write-Warning -Message $("Failed to Restart the Computer. Error: "+ $_.Exception.Message)
+   Start-Sleep 10
    Break;
 }
