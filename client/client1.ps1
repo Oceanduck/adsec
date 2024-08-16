@@ -96,7 +96,7 @@ catch {
 #Restart the Computer
 try {
    Write-Host "Rebooting the system  in 30 seconds, the installation will continue after reboot. Please login with Administrator login once the system reboots"
-   Start-Sleep 5
+   Restart-Computer
 }
 catch {
    Write-Warning -Message $("Failed to Restart the Computer. Error: "+ $_.Exception.Message)
