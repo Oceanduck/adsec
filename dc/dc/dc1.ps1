@@ -139,3 +139,6 @@ catch {
    Write-Warning -Message $("Failed to Restart the Computer. Error: "+ $_.Exception.Message)
    Break;
 }
+
+#Disable the server manager pop up
+New-ItemProperty -Path HKCU:\Software\Microsoft\ServerManager -Name DoNotOpenServerManagerAtLogon -PropertyType DWORD -Value "0x1" –Force

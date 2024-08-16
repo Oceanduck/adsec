@@ -60,14 +60,16 @@ sleep 3
 
 try {
     Expand-Archive $zipFile -DestinationPath $tempDir -Force 
-    Write-Host "zipfile Successfully expanded" -ForegroundColor Green
+    Write-Host "`t[+] zipfile Successfully downloaded expanded" -ForegroundColor Green
     }   
  catch {
     Write-Warning -Message $("Failed to open zip file RDP. Error: "+ $_.Exception.Message)
     Break;
 }
 
+Write-Host "`t[+] Now installing Chocolatey packet manager." -ForegroundColor Green
 Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+
 
 #Setting up the stage 2 script execution
 try {

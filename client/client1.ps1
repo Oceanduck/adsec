@@ -37,7 +37,6 @@ if ($enablerdp -ne "yes")
     
 
 #Download and install Chocolatey
-Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 
 choco install googlechrome --version 127.0.6533.100 -y --ignore-checksums 
 choco install wireshark --version 4.2.6 -y
@@ -65,9 +64,7 @@ catch {
 #Restart the Computer
 try {
    Write-Host "Rebooting the system  in 30 seconds, the installation will continue after reboot. Please login with Administrator login once the system reboots"
-   Write-Host "You may need to press enter"
-   read-host “Press ENTER to continue...”
-   Restart-Computer  -ErrorAction Stop
+   Start-Sleep 5
 }
 catch {
    Write-Warning -Message $("Failed to Restart the Computer. Error: "+ $_.Exception.Message)
