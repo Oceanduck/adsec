@@ -41,7 +41,7 @@ IF ($serverpdc)
     Try{
         Start-Process -FilePath "C:\Windows\System32\w32tm.exe" -ArgumentList "/config /manualpeerlist:$($ntpserver1),$($ntpserver2) /syncfromflags:MANUAL /reliable:yes /update" -ErrorAction Stop
         Stop-Service w32time -ErrorAction Stop
-        sleep 2
+        Start-Sleep 5
         Start-Service w32time -ErrorAction Stop
         Write-Host "Successfully set NTP Servers: $($ntpserver1) and $($ntpserver2)" -ForegroundColor Green
         }
@@ -73,6 +73,6 @@ foreach ($User in $Users) {
 #Create Kerberoasting account
 setspn -U -S MSSQLSvc/db-server.talespin.local:1433 mssql_admin
 
-
 Write-Host "The Active Directory has been created"
-read-host “Press ENTER to continue...”
+Start-Sleep 3
+read-host “Press ENTER to continue...” 

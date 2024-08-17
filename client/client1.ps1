@@ -2,7 +2,6 @@
 # Introduction 
 Clear-host
 write-host "Running Stage 1 - Configuring the Client"
-write-host "This tool should not be run in production"
 
 #Define variables to configure the network
 
@@ -17,13 +16,13 @@ $workingDir = "C:\adsec"
 
 cd $workingDir
 
-#Configure RDP
+#Enable RDP
 
 try {
    if ($enablerdp -eq "yes") {
       Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server'-name "fDenyTSConnections" -Value 0 -ErrorAction Stop
       Enable-NetFirewallRule -DisplayGroup "Remote Desktop" -ErrorAction Stop
-      Write-Host "RDP Successfully enabled" -ForegroundColor Green
+      Write-Host "`t[+] RDP Successfully enabled" -ForegroundColor Green
    }   
 }
 catch {
@@ -32,17 +31,22 @@ catch {
 }
 if ($enablerdp -ne "yes")
     {
-    Write-Host "RDP remains disabled" -ForegroundColor Green
+    Write-Host "`t[+] RDP Enabled" -ForegroundColor Green
     }
     
 #Disable the server manager pop up
 New-ItemProperty -Path HKCU:\Software\Microsoft\ServerManager -Name DoNotOpenServerManagerAtLogon -PropertyType DWORD -Value "0x1" –Force
 
-#Download and install Chocolatey
+#Download and install tools
+Write-Host "`t[+] Installing Chrome" -ForegroundColor Green
 choco install googlechrome --version 127.0.6533.100 -y --ignore-checksums 
+Write-Host "`t[+] Installing Wireshark" -ForegroundColor Green
 choco install wireshark --version 4.2.6 -y
+Write-Host "`t[+] Installing 7zip" -ForegroundColor Green
 choco install 7zip --version 24.8.0 -y
+Write-Host "`t[+] Installing Notepadplusplus" -ForegroundColor Green
 choco install notepadplusplus --version 8.6.9 -y
+Write-Host "`t[+] Installing webserver" -ForegroundColor Green
 choco install nginx --version 1.27.0 --params '"/installLocation:C:\nginx /port:8080"' -y
 
 
@@ -54,11 +58,10 @@ Invoke-WebRequest "https://github.com/hashcat/hashcat/releases/download/v6.2.6/h
 7z.exe x $workingDir\hashcat.7z -o"C:\adsec\hashcat\" -y
 
 
-Write-Host "Downloading and configuring the Wiki"
+Write-Host "Downloading the Wiki"
 Invoke-WebRequest "https://github.com/Oceanduck/adsec/raw/main/wiki.7z" -OutFile $workingDir\wiki.7z
-Start-Sleep 5
-7z.exe x $workingDir\wiki.7z -o"C:\nginx\nginx-1.27.0\html\" -y
-Start-Sleep 5
+
+
 
 #Configure the Network
 try {
@@ -71,9 +74,23 @@ catch {
   Write-Warning -Message $("Failed to apply network settings. Error: "+ $_.Exception.Message)
 }
 
+$student = Read-Host 'What is your student number? Execpting a two digit number eg 01, 02, 10, 15'
+  if ($student -is [int]) {
+    Write-Host "Thanks for providing a number"
+    Write-Host "Setting host name to Client$student"
+  } 
+  else {
+  Write-Host "No input detected, Assigning a random student number "
+  $student = Get-Random -Maximum 999 -Minimum 100
+  Write-Host $student
+  }
+
 #Rename the computer
-$random = Get-Random -Maximum 999 -Minimum 100
-$computerName = "Client"+$random
+
+
+
+$computerName = "Client"+$student
+
 try {
   Rename-Computer -ComputerName $env:COMPUTERNAME -NewName $computerName -ErrorAction Stop
   Write-Host "Systemname has been changed to $($computerName)" -ForegroundColor Green

@@ -12,6 +12,12 @@ $workingDir = "C:\adsec"
 #Check connectivity to the domain controller
 Start-Sleep 5
 
+
+Write-Host "Extracting and Configuring the Wiki"
+$7zpass = Read-Host 'Please provide the password that the instructor provided'
+7z.exe x $workingDir\wiki.7z -o"C:\nginx\nginx-1.27.0\html\" -y -p$7zpass
+Start-Sleep 5
+
 do {
     Write-Host "waiting for ping to dc1"
     sleep 3      
@@ -33,11 +39,8 @@ catch {
   Add-Computer -DomainName talespin.local -Credential $credential -ComputerName -ClientX
 }
 
-
-$workingDir = "C:\adsec"
 Set-ItemProperty -path "HKCU:\Control Panel\Desktop\" -name wallpaper -value $tempDir\wall.jpg
 rundll32.exe user32.dll, UpdatePerUserSystemParameters
-
 
 #Restart the Computer
 try {

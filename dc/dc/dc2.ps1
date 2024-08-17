@@ -1,8 +1,8 @@
 
 Clear-host
 write-host "Running Stage 2 - Installing Domain Services"
+Start-Sleep 3
 write-host "This tool should not be run in production"
-
 
 #Configure the varaiable for the domain
 $domainName  = "talespin.local"
@@ -38,6 +38,7 @@ catch {
 try {
     Restart-Computer -ErrorAction Stop
     Write-Host "Rebooting the system now, the installation will continue after reboot."
+    Start-Sleep 3
  }
  catch {
     Write-Warning -Message $("Failed to Restart the Computer. Error: "+ $_.Exception.Message)

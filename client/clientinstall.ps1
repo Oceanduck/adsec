@@ -1,13 +1,27 @@
 <#
-Create a Windows CLient - and join the talespin domain
-#>
+    .Synopsis
+       Create and Windows CLient and join the domain 'talespin' with a Windows2016 DFS on a Windows 2019 OS
+    .DESCRIPTION
+       This toolis for training only.Intended only for personal use. Not to be run in Production environment.
+    .EXAMPLE
+       There are currently no parameters for the script. Just run this script
+    .OUTPUTS
+       [String]
+    .NOTES
+       Written by @khannaanurag
+     
+    .FUNCTIONALITY
+       Download the files needed to create a domain and create a domain
+       By Default the name of the directory is talespin.local
+       last updated on 20240813
+    #>
 
 Clear-host
 write-host "Running Stage 0 - Starting installation of Client"
 write-host "This tool should not be run in production"
 write-host "This process would take between 10-15 minutes"
 Write-Host "********************"
-Write-Host "Please ensure you have taken a snapshot of the VM"
+Write-Host "Please ensure you have taken a snapshot of the Virtual Machine"
 
 Read-Host -Prompt "Press any key to continue or CTRL+C to quit. Once you continue the system will be renamed, ip address set, connected to the talespin domain and tools downloaded " | Out-Null
 
@@ -71,7 +85,7 @@ Write-Host "`t[+] Now installing Chocolatey packet manager." -ForegroundColor Gr
 Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 
 
-#Setting up the stage 2 script execution
+#Setting up the stage 1 script execution
 try {
     New-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\RunOnce"
     Set-Location -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\RunOnce"
@@ -79,13 +93,13 @@ try {
   }
   catch {
      Write-Warning -Message $("Failed to set the registry to run stage 1. Error: "+ $_.Exception.Message)
+     Start-Sleep 5
      Break;
   }
   
   #Restart the Computer
   try {
      Write-Host "Rebooting the system  in 30 seconds, the installation will continue after reboot. Please login with Administrator login once the system reboots"
-     Write-Host "You may need to press enter"
      read-host “Press ENTER to continue...”
      Restart-Computer  -ErrorAction Stop
   }
