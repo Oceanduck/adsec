@@ -14,6 +14,7 @@ $enablerdp = 'yes'
 $disableiesecconfig = 'yes'
 $workingDir = "C:\adsec"
 
+New-Item -Path "c:\" -Name "adsec" -ItemType "directory"
 cd $workingDir
 
 #Enable RDP
@@ -86,9 +87,6 @@ $student = Read-Host 'What is your student number? Execpting a two digit number 
   }
 
 #Rename the computer
-
-
-
 $computerName = "Client"+$student
 
 try {
@@ -114,7 +112,8 @@ catch {
 
 #Restart the Computer
 try {
-   Write-Host "Rebooting the system  in 30 seconds, the installation will continue after reboot"
+   Write-Host "Rebooting the system, will continue post reboot."
+   Start-Sleep 5
    Restart-Computer
 }
 catch {

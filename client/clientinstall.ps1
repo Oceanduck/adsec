@@ -15,8 +15,7 @@
        By Default the name of the directory is talespin.local
        last updated on 20240813
     #>
-
-Clear-host
+Clear-Host
 write-host "Running Stage 0 - Starting installation of Client"
 write-host "This tool should not be run in production"
 write-host "This process would take between 10-15 minutes"
@@ -82,6 +81,7 @@ try {
 }
 
 Write-Host "`t[+] Now installing Chocolatey packet manager." -ForegroundColor Green
+Write-Host "`t[+] This may take several minutes as it will download and install .Net also." -ForegroundColor Green
 Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 
 
