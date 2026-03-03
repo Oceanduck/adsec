@@ -16,8 +16,9 @@ adsec-labs/
 ├── tools/                   # Attack tools and binaries
 │   ├── Rubeus.zip
 │   └── SpoolSample.exe
-├── scripts/                 # Python and automation scripts
-│   └── as_req_roast.py
+├── scripts/                 # Setup and automation scripts
+│   ├── as_req_roast.py
+│   └── ConfigureRemotingForAnsible.ps1
 ├── pcaps/                   # Network capture files
 │   └── louie-asreq.pcapng
 ├── wordlists/              # Password lists for cracking
@@ -60,7 +61,19 @@ adsec-labs/
 - **Usage**: Printer bug exploitation for relay attacks
 - **Reference**: [leechristensen/SpoolSample](https://github.com/leechristensen/SpoolSample)
 
-### Python Scripts
+### Scripts
+
+#### ConfigureRemotingForAnsible.ps1
+- **Purpose**: Configure Windows Remote Management (WinRM) for Ansible connectivity
+- **Features**: Enables WinRM over HTTPS, creates self-signed certificates, configures firewall rules
+- **Usage**:
+  ```powershell
+  # Download and execute (from Lab 0B)
+  iwr -useb https://raw.githubusercontent.com/Oceanduck/adsec-labs/main/scripts/ConfigureRemotingForAnsible.ps1 | iex
+  ```
+- **Used in**: Lab 0B - Configuring the Lab
+- **Reference**: [Ansible Documentation](https://docs.ansible.com/ansible/latest/os_guide/windows_setup.html)
+- **Note**: This is the official Ansible WinRM configuration script, hosted here for reliability
 
 #### as_req_roast.py
 - **Purpose**: Extract AS-REQ encrypted timestamps from PCAP files for offline cracking
@@ -72,6 +85,7 @@ adsec-labs/
   python3 scripts/as_req_roast.py pcaps/louie-asreq.pcapng talespin.lab
   ```
 - **Output**: Hashcat-compatible format for AS-REP roasting
+- **Used in**: Lab 5 - AS-REQ Roasting
 
 ### Lab Files
 
