@@ -381,6 +381,31 @@ Else {
     }
 }
 
+# Enable AllowUnencrypted for HTTP transport (required for basic auth over HTTP)
+$allowUnencryptedSetting = Get-ChildItem WSMan:\localhost\Service | Where-Object { $_.Name -eq "AllowUnencrypted" }
+If (($allowUnencryptedSetting.Value) -eq $false) {
+    Write-Verbose "Enabling AllowUnencrypted for HTTP transport."
+    Set-Item -Path "WSMan:\localhost\Service\AllowUnencrypted" -Value $true
+    Write-ProgressLog "Enabled AllowUnencrypted for HTTP transport."
+}
+Else {
+    Write-Verbose "AllowUnencrypted is already enabled."
+}
+
+# Ensure HTTP listener exists on port 5985
+If (!($listeners | Where-Object { $_.Keys -like "TRANSPORT=HTTP" })) {
+    Write-Verbose "Creating HTTP listener on port 5985."
+    $httpSelectorSet = @{
+        Transport = "HTTP"
+        Address   = "*"
+    }
+    New-WSManInstance -ResourceURI 'winrm/config/Listener' -SelectorSet $httpSelectorSet
+    Write-ProgressLog "Created HTTP listener on port 5985."
+}
+Else {
+    Write-Verbose "HTTP listener already exists."
+}
+
 # If EnableCredSSP if set to true
 If ($EnableCredSSP) {
     # Check for CredSSP authentication
@@ -402,7 +427,24 @@ netsh advfirewall set allprofiles state off
 Write-ProgressLog "Disabled Windows Firewall for all profiles."
 
 # Note: Firewall rules below are retained for reference but not needed when firewall is disabled
-# Configure firewall to allow WinRM HTTPS connections.
+# Configure firewall to allow WinRM HTTP connections (port 5985).
+$fwtest0 = netsh advfirewall firewall show rule name="Allow WinRM HTTP"
+$fwtest0any = netsh advfirewall firewall show rule name="Allow WinRM HTTP" profile=any
+If ($fwtest0.count -lt 5) {
+    Write-Verbose "Adding firewall rule to allow WinRM HTTP."
+    netsh advfirewall firewall add rule profile=any name="Allow WinRM HTTP" dir=in localport=5985 protocol=TCP action=allow
+    Write-ProgressLog "Added firewall rule to allow WinRM HTTP."
+}
+ElseIf (($fwtest0.count -ge 5) -and ($fwtest0any.count -lt 5)) {
+    Write-Verbose "Updating firewall rule to allow WinRM HTTP for any profile."
+    netsh advfirewall firewall set rule name="Allow WinRM HTTP" new profile=any
+    Write-ProgressLog "Updated firewall rule to allow WinRM HTTP for any profile."
+}
+Else {
+    Write-Verbose "Firewall rule already exists to allow WinRM HTTP."
+}
+
+# Configure firewall to allow WinRM HTTPS connections (port 5986).
 $fwtest1 = netsh advfirewall firewall show rule name="Allow WinRM HTTPS"
 $fwtest2 = netsh advfirewall firewall show rule name="Allow WinRM HTTPS" profile=any
 If ($fwtest1.count -lt 5) {
